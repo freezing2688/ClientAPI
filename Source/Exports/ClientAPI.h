@@ -34,4 +34,7 @@ extern "C"
 
     // Client methods handle fetching of user information such as GUID and geolocation.
     EXPORT(AyriaClient);
+
+    // Developer methods handle non-user invoked requests. Such as API initialization, auth and banchecks.
+    EXPORT(AyriaDeveloper);
 };
