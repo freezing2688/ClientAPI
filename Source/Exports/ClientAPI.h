@@ -23,7 +23,7 @@ extern "C"
     // Storage methods handle local, remote and cloud file IO.
     EXPORT(AyriaStorage);
 
-    // Keyvalue methods handle local and remote storage. Maps are global.
+    // Keyvalue methods handle local and remote storage; both persistent and transient.
     EXPORT(AyriaKeyvalue);
 
     // Lobby methods handle hosting, migration and searching of networked groups.
@@ -34,4 +34,7 @@ extern "C"
 
     // Client methods handle fetching of user information such as GUID and geolocation.
     EXPORT(AyriaClient);
+
+    // Developer methods handle non-user invoked requests. Such as API initialization, auth and banchecks.
+    EXPORT(AyriaDeveloper);
 };
