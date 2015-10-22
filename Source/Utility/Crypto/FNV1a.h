@@ -7,7 +7,6 @@
 */
 
 #pragma once
-#include <stdlib.h>
 
 // FNV1 constants.
 constexpr size_t FNV1_Prime = (sizeof(void *) == 8 ? 1099511628211u : 16777619u);
