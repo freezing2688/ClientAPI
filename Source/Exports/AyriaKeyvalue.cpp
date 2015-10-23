@@ -37,5 +37,6 @@ bool __cdecl AyriaKeyvalue(size_t Command, ...)
         EXPORTMETHOD("ReadRemotePersistent", [](va_list Placeholder) { return false; });
     }
 
+    va_end(Variadic);
     return Result;
 }

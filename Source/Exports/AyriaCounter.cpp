@@ -6,6 +6,7 @@
         Incrementation and decrementation of application specific keys.
 */
 
+#pragma warning (disable:4307)
 #include "..\Utility\Crypto\FNV1a.h"
 #include "ClientAPI.h"
 
@@ -32,5 +33,6 @@ bool __cdecl AyriaCounter(size_t Command, ...)
         EXPORTMETHOD("DecrementRemote", [](va_list Placeholder) { return false; });
     }
 
+    va_end(Variadic);
     return Result;
 }
