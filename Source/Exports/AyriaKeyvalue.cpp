@@ -24,18 +24,19 @@ bool __cdecl AyriaKeyvalue(size_t Command, ...)
 
     switch (Command)
     {
-        // Takes a size_t key and a char data[32] as argument.
+        // Takes a uint64_t key and a char data[32] as argument.      
         EXPORTMETHOD("WriteLocalTransient", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("WriteLocalPersistent", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("WriteRemoteTransient", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("WriteRemotePersistent", [](va_list Placeholder) { return false; });
 
-        // Takes a size_t key and a char *data as argument.
+        // Takes a uint64_t key and a char *data as argument.
         EXPORTMETHOD("ReadLocalTransient", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("ReadLocalPersistent", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("ReadRemoteTransient", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("ReadRemotePersistent", [](va_list Placeholder) { return false; });
     }
 
+    va_end(Variadic);
     return Result;
 }
