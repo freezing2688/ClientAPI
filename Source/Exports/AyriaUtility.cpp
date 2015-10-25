@@ -16,7 +16,7 @@
         Result = Functor(Variadic);         \
         break
 
-bool __cdecl AyriaStorage(size_t Command, ...)
+bool __cdecl AyriaUtility(size_t Command, ...)
 {
     bool Result = false;
     va_list Variadic;
@@ -50,7 +50,7 @@ bool __cdecl AyriaStorage(size_t Command, ...)
         EXPORTMETHOD("CSVReadNext", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("CSVSkipLine", [](va_list Placeholder) { return false; });
 
-        // Compression; takes a char *Plaintext, char **ModifiedBuffer, uint32_t PlainLength, uint32_t *ModifiedLength.
+        // Compression; takes a char *Plaintext, char **ModifiedBuffer, uint32_t PlainLength, int32_t *ModifiedLength.
         EXPORTMETHOD("LZ4Inflate", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("LZ4Deflate", [](va_list Placeholder) { return false; });
     }
