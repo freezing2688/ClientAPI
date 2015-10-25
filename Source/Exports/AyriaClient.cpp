@@ -40,6 +40,11 @@ bool __cdecl AyriaClient(size_t Command, ...)
         EXPORTMETHOD("FetchMAC", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("FetchCPU", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("FetchGPU", [](va_list Placeholder) { return false; });
+        
+        // Application ownership, takes an unit32_t applicationID and a bool *Result.
+        EXPORTMETHOD("DownloadedApplication", [](va_list Placeholder) { return false; });
+        EXPORTMETHOD("VerifyApplication", [](va_list Placeholder) { return false; });
+        EXPORTMETHOD("OwnsApplication", [](va_list Placeholder) { return false; });
     }
 
     va_end(Variadic);
