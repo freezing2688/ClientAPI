@@ -37,4 +37,7 @@ extern "C"
 
     // Developer methods handle non-user invoked requests. Such as API initialization, auth and banchecks.
     EXPORT(AyriaDeveloper);
+
+    // Utility methods handle features like compression, encrypton and filemanagement.
+    EXPORT(AyriaUtility);
 };
