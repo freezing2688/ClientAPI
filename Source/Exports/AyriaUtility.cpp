@@ -21,6 +21,9 @@ namespace APIImplentation
 {
     extern bool LZ4Inflate(va_list Variadic);
     extern bool LZ4Deflate(va_list Variadic);
+
+    extern bool AES256Encrypt(va_list Variadic);
+    extern bool AES256Decrypt(va_list Variadic);
 };
 
 bool __cdecl AyriaUtility(size_t Command, ...)
@@ -32,8 +35,8 @@ bool __cdecl AyriaUtility(size_t Command, ...)
     switch (Command)
     {
         // Encryption; takes a char *Plaintext, char *Ciphertext, char *IV, char *Key, uint32_t Length.
-        EXPORTMETHOD("AES256Encrypt", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("AES256Decrypt", [](va_list Placeholder) { return false; });
+        EXPORTMETHOD("AES256Encrypt", APIImplentation::AES256Encrypt);
+        EXPORTMETHOD("AES256Decrypt", APIImplentation::AES256Decrypt);
         EXPORTMETHOD("DES3Encrypt", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("DES3Decrypt", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("TEAEncrypt", [](va_list Placeholder) { return false; });
