@@ -24,11 +24,11 @@ bool __cdecl AyriaCounter(size_t Command, ...)
 
     switch (Command)
     {
-        // Takes a size_t key as argument.
+        // Takes a uint64_t key as argument.
         EXPORTMETHOD("IncrementLocal", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("IncrementRemote", [](va_list Placeholder) { return false; });
 
-        // Takes a size_t key as argument.
+        // Takes a uint64_t key as argument.
         EXPORTMETHOD("DecrementLocal", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("DecrementRemote", [](va_list Placeholder) { return false; });
     }
