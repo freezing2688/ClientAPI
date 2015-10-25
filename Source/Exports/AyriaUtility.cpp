@@ -16,6 +16,13 @@
         Result = Functor(Variadic);         \
         break
 
+// Implementations.
+namespace APIImplentation
+{
+    extern bool LZ4Inflate(va_list Variadic);
+    extern bool LZ4Deflate(va_list Variadic);
+};
+
 bool __cdecl AyriaUtility(size_t Command, ...)
 {
     bool Result = false;
@@ -51,8 +58,8 @@ bool __cdecl AyriaUtility(size_t Command, ...)
         EXPORTMETHOD("CSVSkipLine", [](va_list Placeholder) { return false; });
 
         // Compression; takes a char *Plaintext, char **ModifiedBuffer, uint32_t PlainLength, int32_t *ModifiedLength.
-        EXPORTMETHOD("LZ4Inflate", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("LZ4Deflate", [](va_list Placeholder) { return false; });
+        EXPORTMETHOD("LZ4Inflate", APIImplentation::LZ4Inflate);
+        EXPORTMETHOD("LZ4Deflate", APIImplentation::LZ4Deflate);
     }
 
     va_end(Variadic);
