@@ -24,6 +24,9 @@ namespace APIImplentation
 
     extern bool AES256Encrypt(va_list Variadic);
     extern bool AES256Decrypt(va_list Variadic);
+
+    extern bool FNV1aHash_64(va_list Variadic);
+    extern bool SM3Hash_192(va_list Variadic);
 };
 
 bool __cdecl AyriaUtility(size_t Command, ...)
@@ -51,8 +54,8 @@ bool __cdecl AyriaUtility(size_t Command, ...)
         EXPORTMETHOD("RSAContinue", [](va_list Placeholder) { return false; });
 
         // Hashing; takes a char *Plaintext, uint32_t PlainLength, char *Result.
-        EXPORTMETHOD("FNV1aHash_64", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("SM3Hash_192", [](va_list Placeholder) { return false; });
+        EXPORTMETHOD("FNV1aHash_64", APIImplentation::FNV1aHash_64);
+        EXPORTMETHOD("SM3Hash_192", APIImplentation::SM3Hash_192);
         EXPORTMETHOD("SHA3Hash_256", [](va_list Placeholder) { return false; });
 
         // File readers; takes a char *Data.
