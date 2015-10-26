@@ -18,7 +18,7 @@ namespace APIImplentation
         char *Plaintext = va_arg(Variadic, char *);
         char **ModifiedBuffer = va_arg(Variadic, char **);
         int32_t PlainLength = va_arg(Variadic, int32_t);
-        uint32_t *ModifiedLength = va_arg(Variadic, uint32_t *);
+        int32_t *ModifiedLength = va_arg(Variadic, int32_t *);
 
         // LZ4 compression is about 2.1, so a large buffer is needed.
         *ModifiedBuffer = new char[PlainLength * 3]();
@@ -36,7 +36,7 @@ namespace APIImplentation
         char *Plaintext = va_arg(Variadic, char *);
         char **ModifiedBuffer = va_arg(Variadic, char **);
         int32_t PlainLength = va_arg(Variadic, int32_t);
-        uint32_t *ModifiedLength = va_arg(Variadic, uint32_t *);
+        int32_t *ModifiedLength = va_arg(Variadic, int32_t *);
 
         // LZ4 compression is about 2.1, so a large buffer is needed.
         *ModifiedBuffer = new char[PlainLength * 3]();
