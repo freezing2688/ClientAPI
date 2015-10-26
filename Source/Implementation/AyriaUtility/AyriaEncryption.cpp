@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include "..\..\Utility\Crypto\AES256.h"
+#include "..\..\Utility\Crypto\McbDES2.hpp"
 
 namespace APIImplentation
 {
@@ -54,4 +55,41 @@ namespace APIImplentation
 
         return true;
     }
+    
+    bool DES3Encrypt(va_list Variadic){
+        
+        unsigned char *lpKey1 = va_arg(Variadic, unsigned char *);
+        unsigned char *lpKey2 = va_arg(Variadic, unsigned char *);
+        char *Plaintext = va_arg(Variadic, char *);
+
+        McbDES desEncrypt;
+        
+        desEncrypt.McbSetKey1(lpKey1);
+        desEncrypt.McbSetKey2(lpKey2);
+        
+        if (desEncrypt.McbEncrypt(Plaintext))
+        {
+            return true;
+        }
+        return false;
+    }
+    
+     bool DES3Decrypt(va_list Variadic){
+         
+         unsigned char *lpKey1 = va_arg(Variadic, unsigned char *);
+         unsigned char *lpKey2 = va_arg(Variadic, unsigned char *);
+         unsigned char *Plaintext = va_arg(Variadic, unsigned char *);
+         uint32_t Length = va_arg(Variadic, uint32_t);
+
+         McbDES desDecrypt;
+         
+         desDecrypt.McbSetKey1(lpKey1);
+         desDecrypt.McbSetKey2(lpKey2);
+         
+         if(desDecrypt.McbDecrypt(Plaintext, Length)){
+             memcpy(Plaintext, desDecrypt.McbGetPlainText(), desDecrypt.McbGetPlainTextSize());
+             return true;
+         }
+         return false;
+     }
 };
