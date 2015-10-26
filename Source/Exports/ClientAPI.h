@@ -10,7 +10,19 @@
 #pragma once
 #include <stdarg.h>
 
-#define EXPORT(ExportName) __declspec(dllexport) bool __cdecl ExportName(size_t Command, ...)
+#ifdef __linux__
+    #define EXPORT_ATTR __attribute__((visibility("default")))
+    #define IMPORT_ATTR
+#elif _WIN32
+    #define EXPORT_ATTR __declspec(dllexport)
+    #define IMPORT_ATTR __declspec(dllimport)
+#else
+    #define EXPORT_ATTR
+    #define IMPORT_ATTR
+    #pragma warning Unknown dynamic link import/export semantics.
+#endif
+
+#define EXPORT(ExportName) EXPORT_ATTR bool __cdecl ExportName(size_t Command, ...)
 
 extern "C"
 {
