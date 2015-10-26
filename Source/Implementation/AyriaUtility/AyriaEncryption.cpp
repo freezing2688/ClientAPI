@@ -56,11 +56,14 @@ namespace APIImplentation
         return true;
     }
     
-    bool DES3Encrypt(va_list Variadic){
+    bool DES3Encrypt(va_list Variadic)
+    {
         
+        char *Plaintext = va_arg(Variadic, char *);
+        char *Ciphertext = va_arg(Variadic, char *);
         unsigned char *lpKey1 = va_arg(Variadic, unsigned char *);
         unsigned char *lpKey2 = va_arg(Variadic, unsigned char *);
-        char *Plaintext = va_arg(Variadic, char *);
+        uint32_t Length = va_arg(Variadic, uint32_t);
 
         McbDES desEncrypt;
         
@@ -69,16 +72,19 @@ namespace APIImplentation
         
         if (desEncrypt.McbEncrypt(Plaintext))
         {
+            memcpy(Ciphertext, desEncrypt.McbGetCryptogram(), desEncrypt.McbGetCryptogramSize());
             return true;
         }
         return false;
     }
     
-     bool DES3Decrypt(va_list Variadic){
+     bool DES3Decrypt(va_list Variadic)
+    {
          
+         char *Plaintext = va_arg(Variadic, char *);
+         unsigned char *Ciphertext = va_arg(Variadic, unsigned char *);
          unsigned char *lpKey1 = va_arg(Variadic, unsigned char *);
          unsigned char *lpKey2 = va_arg(Variadic, unsigned char *);
-         unsigned char *Plaintext = va_arg(Variadic, unsigned char *);
          uint32_t Length = va_arg(Variadic, uint32_t);
 
          McbDES desDecrypt;
@@ -86,7 +92,7 @@ namespace APIImplentation
          desDecrypt.McbSetKey1(lpKey1);
          desDecrypt.McbSetKey2(lpKey2);
          
-         if(desDecrypt.McbDecrypt(Plaintext, Length)){
+         if(desDecrypt.McbDecrypt(Ciphertext, Length)){
              memcpy(Plaintext, desDecrypt.McbGetPlainText(), desDecrypt.McbGetPlainTextSize());
              return true;
          }
