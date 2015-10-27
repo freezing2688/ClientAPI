@@ -47,11 +47,11 @@ Bytebuffer::~Bytebuffer()
 // Property access.
 uint32_t Bytebuffer::GetSize()
 {
-    return InternalBuffer.size();
+    return (uint32_t)InternalBuffer.size();
 }
 uint32_t Bytebuffer::GetLength()
 {
-    return InternalBuffer.size();
+    return (uint32_t)InternalBuffer.size();
 }
 uint32_t Bytebuffer::GetPosition()
 {
@@ -138,7 +138,7 @@ bool Bytebuffer::RawWrite(uint32_t WriteCount, void *InBuffer)
     }
 
     // Write the data as preallocated and appended.
-    uint32_t AllocatedBytes = InternalBuffer.size() - InternalPosition;
+    uint32_t AllocatedBytes = (uint32_t)InternalBuffer.size() - InternalPosition;
     return RawWrite(AllocatedBytes, InBuffer)
         && RawWrite(WriteCount - AllocatedBytes, (uint8_t *)InBuffer + AllocatedBytes);
 }

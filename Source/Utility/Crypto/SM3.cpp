@@ -34,7 +34,7 @@ int sm3_update(sm3_ctx_t *ctx, const unsigned char* data, size_t data_len)
         unsigned int left = SM3_BLOCK_SIZE - ctx->num;
         if (data_len < left) {
             memcpy(ctx->block + ctx->num, data, data_len);
-            ctx->num += data_len;
+            ctx->num += (int)data_len;
             return 1;
         }
         else {
@@ -51,7 +51,7 @@ int sm3_update(sm3_ctx_t *ctx, const unsigned char* data, size_t data_len)
         data += SM3_BLOCK_SIZE;
         data_len -= SM3_BLOCK_SIZE;
     }
-    ctx->num = data_len;
+    ctx->num = (int)data_len;
     if (data_len) {
         memcpy(ctx->block, data, data_len);
     }
