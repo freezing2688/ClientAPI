@@ -28,7 +28,6 @@ namespace APIImplentation
         // Read the entire file.
         GlobalManager.BeginRead(Filename);
         GlobalManager.ReadAll();
-        GlobalManager.CloseFile();
 
         return true;
     }
