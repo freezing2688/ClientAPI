@@ -77,6 +77,9 @@ namespace APIImplentation
      @return True if the hashing was handled. If hashing was successful Result will contain the hash.
      */
     extern bool SM3Hash_192(va_list Variadic);
+
+    extern bool CSVLoad(va_list Variadic);
+    extern bool CSVReadNext(va_list Variadic);
 };
 
 bool __cdecl AyriaUtility(size_t Command, ...)
@@ -109,9 +112,8 @@ bool __cdecl AyriaUtility(size_t Command, ...)
         EXPORTMETHOD("SHA3Hash_256", [](va_list Placeholder) { return false; });
 
         // File readers; takes a char *Data.
-        EXPORTMETHOD("CSVLoad", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("CSVReadNext", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("CSVSkipLine", [](va_list Placeholder) { return false; });
+        EXPORTMETHOD("CSVLoad", APIImplentation::CSVLoad);
+        EXPORTMETHOD("CSVReadNext", APIImplentation::CSVReadNext);
 
         // Compression; takes a char *Plaintext, char **ModifiedBuffer, uint32_t PlainLength, int32_t *ModifiedLength.
         EXPORTMETHOD("LZ4Inflate", APIImplentation::LZ4Inflate);

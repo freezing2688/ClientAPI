@@ -58,7 +58,6 @@ namespace APIImplentation
     
     bool DES3Encrypt(va_list Variadic)
     {
-        
         char *Plaintext = va_arg(Variadic, char *);
         char *Ciphertext = va_arg(Variadic, char *);
         unsigned char *lpKey1 = va_arg(Variadic, unsigned char *);
@@ -77,10 +76,8 @@ namespace APIImplentation
         }
         return false;
     }
-    
-     bool DES3Decrypt(va_list Variadic)
+    bool DES3Decrypt(va_list Variadic)
     {
-         
          char *Plaintext = va_arg(Variadic, char *);
          unsigned char *Ciphertext = va_arg(Variadic, unsigned char *);
          unsigned char *lpKey1 = va_arg(Variadic, unsigned char *);
