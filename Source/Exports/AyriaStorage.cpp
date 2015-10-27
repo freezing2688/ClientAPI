@@ -16,6 +16,20 @@
         Result = Functor(Variadic);         \
         break
 
+// Implementations.
+namespace APIImplentation
+{
+    extern bool WriteUserfile(va_list Variadic);
+    extern bool WriteLocalfile(va_list Variadic);
+    extern bool WriteMemoryfile(va_list Variadic);
+    extern bool WritePublicfile(va_list Variadic);
+
+    extern bool ReadUserfile(va_list Variadic);
+    extern bool ReadLocalfile(va_list Variadic);
+    extern bool ReadMemoryfile(va_list Variadic);
+    extern bool ReadPublicfile(va_list Variadic);
+};
+
 bool __cdecl AyriaStorage(size_t Command, ...)
 {
     bool Result = false;
@@ -24,17 +38,17 @@ bool __cdecl AyriaStorage(size_t Command, ...)
 
     switch (Command)
     {
-        // Takes a char *filename; applicationID is sent automatically.
-        EXPORTMETHOD("WriteUserfile", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("WriteLocalfile", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("WriteMemoryfile", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("WritePublicfile", [](va_list Placeholder) { return false; });
-
         // Takes a char *filename, size_t buffersize, char *buffer; applicationID is sent automatically.
-        EXPORTMETHOD("ReadUserfile", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("ReadLocalfile", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("ReadMemoryfile", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("ReadPublicfile", [](va_list Placeholder) { return false; });
+        EXPORTMETHOD("WriteUserfile", APIImplentation::WriteUserfile);
+        EXPORTMETHOD("WriteLocalfile", APIImplentation::WriteLocalfile);
+        EXPORTMETHOD("WriteMemoryfile", APIImplentation::WriteMemoryfile);
+        EXPORTMETHOD("WritePublicfile", APIImplentation::WritePublicfile);
+
+        // Takes a char *filename, size_t *buffersize, char *buffer; applicationID is sent automatically.
+        EXPORTMETHOD("ReadUserfile", APIImplentation::ReadUserfile);
+        EXPORTMETHOD("ReadLocalfile", APIImplentation::ReadLocalfile);
+        EXPORTMETHOD("ReadMemoryfile", APIImplentation::ReadMemoryfile);
+        EXPORTMETHOD("ReadPublicfile", APIImplentation::ReadPublicfile);
     }
 
     va_end(Variadic);
