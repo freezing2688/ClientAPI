@@ -117,14 +117,14 @@ bool CSVManager::Insert(int32_t Row, int32_t Col, std::string Entry)
         for (size_t i = Buffer.size(); i < (unsigned)Row + 1; ++i)
             Buffer.push_back(std::vector<std::string>());
     else
-        Row = Buffer.size() > 0 ? Buffer.size() - 1 : 0;
+        Row = Buffer.size() > 0 ? (int32_t)Buffer.size() - 1 : 0;
 
     // Insert cols until we have the insert col number.
     if (Col > 0)
         for (size_t i = Buffer[Row].size(); i < (unsigned)Col + 1; ++i)
             Buffer[Row].push_back("");
     else
-        Col = Buffer[Row].size() > 0 ? Buffer[Row].size() - 1 : 0;
+        Col = Buffer[Row].size() > 0 ? (int32_t)Buffer[Row].size() - 1 : 0;
 
     // Insert the entry.
     Buffer[Row][Col] = Entry;

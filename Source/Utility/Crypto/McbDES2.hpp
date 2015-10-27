@@ -308,7 +308,7 @@ public:
 
     inline bool McbEncrypt(const char * lpszPlainText)        
     {
-        unsigned long cbPlainText = strlen(lpszPlainText);
+        unsigned long cbPlainText = (unsigned long)strlen(lpszPlainText);
         return McbDoDES((unsigned char *)lpszPlainText, cbPlainText, true);
     }
 
