@@ -1,5 +1,6 @@
 # ClientAPI
 A basic library that can be used by developers to access the Ayria services through a DLL.
+Also provides an interface for common utilities.
 
 TODO: Expand on the readme.
 
