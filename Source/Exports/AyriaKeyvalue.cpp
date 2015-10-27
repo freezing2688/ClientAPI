@@ -16,6 +16,19 @@
         Result = Functor(Variadic);         \
         break
 
+namespace APIImplentation
+{
+    extern bool WriteLocalTransient(va_list Variadic);
+    extern bool WriteLocalPersistent(va_list Variadic);
+    extern bool WriteRemoteTransient(va_list Variadic);
+    extern bool WriteRemotePersistent(va_list Variadic);
+
+    extern bool ReadLocalTransient(va_list Variadic);
+    extern bool ReadLocalPersistent(va_list Variadic);
+    extern bool ReadRemoteTransient(va_list Variadic);
+    extern bool ReadRemotePersistent(va_list Variadic);
+};
+
 bool __cdecl AyriaKeyvalue(size_t Command, ...)
 {
     bool Result = false;
@@ -25,16 +38,16 @@ bool __cdecl AyriaKeyvalue(size_t Command, ...)
     switch (Command)
     {
         // Takes a uint64_t key and a char data[32] as argument.      
-        EXPORTMETHOD("WriteLocalTransient", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("WriteLocalPersistent", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("WriteRemoteTransient", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("WriteRemotePersistent", [](va_list Placeholder) { return false; });
+        EXPORTMETHOD("WriteLocalTransient", APIImplentation::WriteLocalTransient);
+        EXPORTMETHOD("WriteLocalPersistent", APIImplentation::WriteLocalPersistent);
+        EXPORTMETHOD("WriteRemoteTransient", APIImplentation::WriteRemoteTransient);
+        EXPORTMETHOD("WriteRemotePersistent", APIImplentation::WriteRemotePersistent);
 
-        // Takes a uint64_t key and a char *data as argument.
-        EXPORTMETHOD("ReadLocalTransient", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("ReadLocalPersistent", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("ReadRemoteTransient", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("ReadRemotePersistent", [](va_list Placeholder) { return false; });
+        // Takes a uint64_t key and a char data[32] as argument.
+        EXPORTMETHOD("ReadLocalTransient", APIImplentation::ReadLocalTransient);
+        EXPORTMETHOD("ReadLocalPersistent", APIImplentation::ReadLocalPersistent);
+        EXPORTMETHOD("ReadRemoteTransient", APIImplentation::ReadRemoteTransient);
+        EXPORTMETHOD("ReadRemotePersistent", APIImplentation::ReadRemotePersistent);
     }
 
     va_end(Variadic);
