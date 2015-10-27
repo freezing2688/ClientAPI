@@ -31,6 +31,7 @@
  */
 #ifndef McbDES2hpp_Included
 #define McbDES2hpp_Included
+#pragma warning(disable: 4244)
 
 /*
  ****************************************************************************
