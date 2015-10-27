@@ -16,6 +16,15 @@
         Result = Functor(Variadic);         \
         break
 
+// Implementations.
+namespace APIImplentation
+{
+    extern bool IncrementLocal(va_list Variadic);
+    extern bool IncrementRemote(va_list Variadic);
+    extern bool DecrementLocal(va_list Variadic);
+    extern bool DecrementRemote(va_list Variadic);
+};
+
 bool __cdecl AyriaCounter(size_t Command, ...)
 {
     bool Result = false;
@@ -25,12 +34,12 @@ bool __cdecl AyriaCounter(size_t Command, ...)
     switch (Command)
     {
         // Takes a uint64_t key as argument.
-        EXPORTMETHOD("IncrementLocal", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("IncrementRemote", [](va_list Placeholder) { return false; });
+        EXPORTMETHOD("IncrementLocal", APIImplentation::IncrementLocal);
+        EXPORTMETHOD("IncrementRemote", APIImplentation::IncrementRemote);
 
         // Takes a uint64_t key as argument.
-        EXPORTMETHOD("DecrementLocal", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("DecrementRemote", [](va_list Placeholder) { return false; });
+        EXPORTMETHOD("DecrementLocal", APIImplentation::DecrementLocal);
+        EXPORTMETHOD("DecrementRemote", APIImplentation::DecrementRemote);
     }
 
     va_end(Variadic);
