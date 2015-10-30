@@ -4156,6 +4156,8 @@ namespace ttmath
 } //namespace
 
 
+#include "ttmathuint_x86.h"
+#include "ttmathuint_x86_64.h"
 #include "ttmathuint_noasm.h"
 
 #endif
