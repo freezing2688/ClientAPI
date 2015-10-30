@@ -80,6 +80,9 @@ namespace APIImplentation
 
     extern bool CSVLoad(va_list Variadic);
     extern bool CSVReadNext(va_list Variadic);
+
+	extern bool HHSStart(va_list Variadic);
+	extern bool HHSContinue(va_list Variadic);
 };
 
 bool __cdecl AyriaUtility(size_t Command, ...)
@@ -101,8 +104,8 @@ bool __cdecl AyriaUtility(size_t Command, ...)
         EXPORTMETHOD("RC6Decrypt", [](va_list Placeholder) { return false; });
 
         // Keyexchange; takes a char *Request (when peer) and a char *Response.
-        EXPORTMETHOD("HHSStart", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("HHSContinue", [](va_list Placeholder) { return false; });
+        EXPORTMETHOD("HHSStart", APIImplentation::HHSStart);
+        EXPORTMETHOD("HHSContinue", APIImplentation::HHSContinue);
         EXPORTMETHOD("RSAStart", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("RSAContinue", [](va_list Placeholder) { return false; });
 
