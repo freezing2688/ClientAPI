@@ -362,6 +362,7 @@ void McbCreateSubKeys(const unsigned char Key[8],
         * convert long pair into byte pair
         *********************************************************************
         */
+#pragma warning(disable: 4244)
 		McbGetKeyPair(bytePair, lPair[n+1][0], lPair[n+1][1]);
 
        /*
