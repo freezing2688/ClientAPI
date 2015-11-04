@@ -97,6 +97,7 @@ size_t CreateTask(struct CacheData *Cache, CacheTask Updatetask, CacheTask Creat
     DataEntries[Index]->UpdateTask = Updatetask;
     DataEntries[Index]->CreationTask = Creationtask;
 
+    CreateTask(DataEntries[Index]);
     DataLock.unlock();
     return Index;
 }
@@ -108,6 +109,10 @@ size_t CreateTask(struct CacheData *Cache)
     DataLock.lock();
     Index = DataEntries.size();
     DataEntries.push_back(Cache);
+
+    if (DataEntries[Index] != nullptr)
+        DataEntries[Index]->CreationTask(DataEntries[Index]);
+
     DataLock.unlock();
     return Index;
 }
