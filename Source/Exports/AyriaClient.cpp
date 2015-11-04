@@ -16,6 +16,19 @@
         Result = Functor(Variadic);         \
         break
 
+// Implementations.
+namespace APIImplentation
+{
+    extern bool FetchTotalMemory(va_list Variadic);
+    extern bool FetchFreeMemory(va_list Variadic);
+    extern bool FetchFreeDisk(va_list Variadic);
+    extern bool FetchUserID(va_list Variadic);
+    extern bool FetchGUID(va_list Variadic);
+    extern bool FetchMAC(va_list Variadic);
+    extern bool FetchCPU(va_list Variadic);
+    extern bool FetchGPU(va_list Variadic);
+};
+
 bool __cdecl AyriaClient(size_t Command, ...)
 {
     bool Result = false;
@@ -32,14 +45,14 @@ bool __cdecl AyriaClient(size_t Command, ...)
         EXPORTMETHOD("FetchNATStatus", [](va_list Placeholder) { return false; });
         
         // Client hardware information; takes a char *Result.
-        EXPORTMETHOD("FetchTotalMemory", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("FetchFreeMemory", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("FetchFreeDisk", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("FetchUserID", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("FetchGUID", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("FetchMAC", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("FetchCPU", [](va_list Placeholder) { return false; });
-        EXPORTMETHOD("FetchGPU", [](va_list Placeholder) { return false; });
+        EXPORTMETHOD("FetchTotalMemory", APIImplentation::FetchTotalMemory);
+        EXPORTMETHOD("FetchFreeMemory", APIImplentation::FetchFreeMemory);
+        EXPORTMETHOD("FetchFreeDisk", APIImplentation::FetchFreeDisk);
+        EXPORTMETHOD("FetchUserID", APIImplentation::FetchUserID);
+        EXPORTMETHOD("FetchGUID", APIImplentation::FetchGUID);
+        EXPORTMETHOD("FetchMAC", APIImplentation::FetchMAC);
+        EXPORTMETHOD("FetchCPU", APIImplentation::FetchCPU);
+        EXPORTMETHOD("FetchGPU", APIImplentation::FetchGPU);
         
         // Application ownership, takes an unit32_t applicationID and a bool *Result.
         EXPORTMETHOD("DownloadedApplication", [](va_list Placeholder) { return false; });

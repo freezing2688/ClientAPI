@@ -247,3 +247,5 @@ _Pvt_Extensions
 *.iobj
 *.ipdb
 *.exp
+*.db
+*.opendb

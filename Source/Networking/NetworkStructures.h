@@ -8,7 +8,6 @@
 */
 
 #pragma once
-
 #include <stdint.h>
 
 // When sending a streamed packet, it should be wrapped.
