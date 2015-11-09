@@ -16,8 +16,8 @@ struct CacheData
     uint32_t TicksSinceUpdate{};
     uint32_t UpdateRate{ 5000 };
 
-    CacheTask *UpdateTask;
-    CacheTask *CreationTask;
+    CacheTask *UpdateTask{ nullptr };
+    CacheTask *CreationTask{ nullptr };
 };
 
 /*
