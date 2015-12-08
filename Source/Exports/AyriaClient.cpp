@@ -37,7 +37,7 @@ bool __cdecl AyriaClient(size_t Command, ...)
 
     switch (Command)
     {
-        // Network information via STUN; takes a uint64_t *Result.
+        // Network information; takes a uint64_t *Result.
         EXPORTMETHOD("TestBandwidthDown", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("FetchGeolocation", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("TestBandwidthUp", [](va_list Placeholder) { return false; });
