@@ -17,7 +17,7 @@
         break
 
 // Implementations.
-namespace APIImplentation
+namespace APIWrapper
 {
     extern bool FetchTotalMemory(va_list Variadic);
     extern bool FetchFreeMemory(va_list Variadic);
@@ -37,24 +37,24 @@ bool __cdecl AyriaClient(size_t Command, ...)
 
     switch (Command)
     {
-        // Network information; takes a uint64_t *Result.
+        // Network information.
         EXPORTMETHOD("TestBandwidthDown", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("FetchGeolocation", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("TestBandwidthUp", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("FetchExternalIP", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("FetchNATStatus", [](va_list Placeholder) { return false; });
         
-        // Client hardware information; takes a char *Result.
-        EXPORTMETHOD("FetchTotalMemory", APIImplentation::FetchTotalMemory);
-        EXPORTMETHOD("FetchFreeMemory", APIImplentation::FetchFreeMemory);
-        EXPORTMETHOD("FetchFreeDisk", APIImplentation::FetchFreeDisk);
-        EXPORTMETHOD("FetchUserID", APIImplentation::FetchUserID);
-        EXPORTMETHOD("FetchGUID", APIImplentation::FetchGUID);
-        EXPORTMETHOD("FetchMAC", APIImplentation::FetchMAC);
-        EXPORTMETHOD("FetchCPU", APIImplentation::FetchCPU);
-        EXPORTMETHOD("FetchGPU", APIImplentation::FetchGPU);
+        // Client hardware information.
+        EXPORTMETHOD("FetchTotalMemory", APIWrapper::FetchTotalMemory);
+        EXPORTMETHOD("FetchFreeMemory", APIWrapper::FetchFreeMemory);
+        EXPORTMETHOD("FetchFreeDisk", APIWrapper::FetchFreeDisk);
+        EXPORTMETHOD("FetchUserID", APIWrapper::FetchUserID);
+        EXPORTMETHOD("FetchGUID", APIWrapper::FetchGUID);
+        EXPORTMETHOD("FetchMAC", APIWrapper::FetchMAC);
+        EXPORTMETHOD("FetchCPU", APIWrapper::FetchCPU);
+        EXPORTMETHOD("FetchGPU", APIWrapper::FetchGPU);
         
-        // Application ownership, takes an unit32_t applicationID and a bool *Result.
+        // Application ownership.
         EXPORTMETHOD("DownloadedApplication", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("VerifyApplication", [](va_list Placeholder) { return false; });
         EXPORTMETHOD("OwnsApplication", [](va_list Placeholder) { return false; });

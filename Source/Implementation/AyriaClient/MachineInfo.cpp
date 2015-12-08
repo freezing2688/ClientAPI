@@ -3,7 +3,7 @@
     License: LGPL 3.0
     Started: 2015-11-04
     Notes:
-        Informationgathering about the clients system.
+        Information-gathering about the clients system.
 */
 
 #ifndef WIN32_LEAN_AND_MEAN
@@ -16,75 +16,151 @@
 #include <windows.h>
 #include <iphlpapi.h>
 #include "..\..\Utility\String\VariadicString.h"
+#include "..\..\Cache\CacheBase.h"
 
 #pragma comment(lib, "Iphlpapi.lib")
 
-namespace APIImplentation
+// Implementation of the API.
+uint64_t TotalMemory()
+{
+    MEMORYSTATUSEX statex;
+
+    // Query for memory info.
+    statex.dwLength = sizeof(statex);
+    GlobalMemoryStatusEx(&statex);
+
+    return statex.ullTotalVirtual;
+}
+uint64_t FreeMemory()
+{
+    MEMORYSTATUSEX statex;
+
+    // Query for memory info.
+    statex.dwLength = sizeof(statex);
+    GlobalMemoryStatusEx(&statex);
+
+    return statex.ullAvailVirtual;
+}
+uint64_t FreeDisk()
+{
+    ULARGE_INTEGER FreeSpace;
+    ULARGE_INTEGER TotalSpace;
+    ULARGE_INTEGER TotalFreeSpace;
+
+    // Query for diskspace.
+    GetDiskFreeSpaceExA(NULL, &FreeSpace, &TotalSpace, &TotalFreeSpace);
+
+    return FreeSpace.QuadPart;
+}
+uint64_t GetUserID()
+{
+    static CacheEntry *UserID = new CacheEntry(
+        [](CacheEntry *Entry) 
+    { 
+        Entry->DataSize = 8;
+        Entry->Data = new uint64_t();
+
+        /*
+            TODO: Contact the server.
+        */
+
+        return true; 
+    },
+        [](CacheEntry *Entry)
+    {
+        /*
+            TODO: Contact the server.
+        */
+
+        return true; 
+    },
+        10000);
+
+    return *(uint64_t *)UserID->Data;
+}
+uint64_t GetGUID()
+{
+    static CacheEntry *GUID = new CacheEntry(
+        [](CacheEntry *Entry) 
+    { 
+        Entry->DataSize = 8;
+        Entry->Data = new uint64_t();
+
+        /*
+            TODO: Decide on a method for generation.
+        */
+
+        return true; 
+    },
+        [](CacheEntry *Entry)
+    {
+        /*
+            TODO: Decide on a method for generation.
+        */
+
+        return true; 
+    },
+        10000);
+
+    return *(uint64_t *)GUID->Data;
+}
+void GetCPU(size_t *SystemUnits, size_t *ProcessUnits)
+{
+    /*
+        NOTE:
+        This function returns the number of logical units.
+        4 physical cores + 4 Hyperthreading cores = 8 units.
+    */
+    ULONG_PTR SystemAffinityMask = 0;
+    ULONG_PTR ProcessAffinityMask = 0;
+
+    // Processor information.
+    GetProcessAffinityMask(GetCurrentProcess(), &ProcessAffinityMask, &SystemAffinityMask);
+
+    // Count the units.
+    for (size_t i = 0; i < sizeof(ULONG_PTR) * 8; ++i)
+    {
+        if (((SystemAffinityMask) >> (i)) & 1) *SystemUnits++;
+        if (((ProcessAffinityMask) >> (i)) & 1) *ProcessUnits++;
+    }
+}
+
+namespace APIWrapper
 {
     bool FetchTotalMemory(va_list Variadic)
     {
-        char *Result = va_arg(Variadic, char *);
-        MEMORYSTATUSEX statex;
-
-        // Query for memory info.
-        statex.dwLength = sizeof (statex);
-        GlobalMemoryStatusEx (&statex);
-
-        // Return total bytes.
-        strcpy_s(Result, 1024, va("%lld", statex.ullTotalVirtual));
+        uint64_t *Result = va_arg(Variadic, uint64_t *);
+        
+        *Result = TotalMemory();
         return true;
     }
     bool FetchFreeMemory(va_list Variadic)
     {
-        char *Result = va_arg(Variadic, char *);
-        MEMORYSTATUSEX statex;
+        uint64_t *Result = va_arg(Variadic, uint64_t *);
 
-        // Query for memory info.
-        statex.dwLength = sizeof (statex);
-        GlobalMemoryStatusEx (&statex);
-
-        // Return total bytes.
-        strcpy_s(Result, 1024, va("%lld", statex.ullAvailVirtual));
+        *Result = FreeMemory();
         return true;
     }
     bool FetchFreeDisk(va_list Variadic)
     {
-        char *Result = va_arg(Variadic, char *);
-        ULARGE_INTEGER FreeSpace;
-        ULARGE_INTEGER TotalSpace;
-        ULARGE_INTEGER TotalFreeSpace;
+        uint64_t *Result = va_arg(Variadic, uint64_t *);
 
-        // Query for diskspace.
-        GetDiskFreeSpaceExA(NULL, &FreeSpace, &TotalSpace, &TotalFreeSpace);
-
-        // Return total bytes.
-        strcpy_s(Result, 1024, va("%lld", FreeSpace.QuadPart));
+        *Result = FreeDisk();
         return true;
     }
     bool FetchUserID(va_list Variadic)
     {
-        static uint64_t UserID = 0;
-        char *Result = va_arg(Variadic, char *);
-        
-        if (UserID == 0)
-        {
-            /*
-                TODO:
-                Fetch this information from the server.
-            */
-        }
+        uint64_t *Result = va_arg(Variadic, uint64_t *);
 
-        // Return the ID as a string.
-        strcpy_s(Result, 1024, va("%llu", UserID));
+        *Result = GetUserID();
         return true;
     }
     bool FetchGUID(va_list Variadic)
     {
-        /*
-            TODO:
-            Vote on the GUID generation.
-        */
-        return false;
+        uint64_t *Result = va_arg(Variadic, uint64_t *);
+
+        *Result = GetGUID();
+        return true;
     }
     bool FetchMAC(va_list Variadic)
     {
@@ -120,29 +196,10 @@ namespace APIImplentation
     }
     bool FetchCPU(va_list Variadic)
     {
-        /*
-            NOTE:
-            This function returns the number of logical units.
-            4 physical cores + 4 Hyperthreading cores = 8 units.
-        */
-        char *Result = va_arg(Variadic, char *);
-        ULONG_PTR SystemAffinityMask = 0;
-        ULONG_PTR ProcessAffinityMask = 0;
-        size_t SystemUnits = 0;
-        size_t ProcessUnits = 0;
+        size_t *System = va_arg(Variadic, size_t *);
+        size_t *Process = va_arg(Variadic, size_t *);
 
-        // Processor information.
-        GetProcessAffinityMask(GetCurrentProcess(), &ProcessAffinityMask, &SystemAffinityMask);
-
-        // Count the units.
-        for (size_t i = 0; i < sizeof(ULONG_PTR) * 8; ++i)
-        {
-            if (((SystemAffinityMask) >> (i)) & 1) SystemUnits++;
-            if (((ProcessAffinityMask) >> (i)) & 1) ProcessUnits++;
-        }
-
-        // Result formated as a csv.
-        strcpy_s(Result, 1024, va("%i,%i", SystemUnits, ProcessUnits));
+        GetCPU(System, Process);
         return true;
     }
     bool FetchGPU(va_list Variadic)
