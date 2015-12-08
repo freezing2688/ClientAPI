@@ -23,8 +23,10 @@ enum class eBytebufferType : uint8_t
     UINT32 = 7,
     SINT64 = 8,
     UINT64 = 9,
+#ifndef NO_TTMATH
     SINT128 = 10,
     UINT128 = 11,
+#endif
     FLOAT32 = 12,
     FLOAT64 = 13,
     ASCIISTRING = 14,
@@ -69,7 +71,21 @@ public:
     bool WriteDatatype(eBytebufferType Type);
     bool RawRead(uint32_t ReadCount, void *OutBuffer = nullptr);
     bool RawWrite(uint32_t WriteCount, void *InBuffer = nullptr);
+
+    // Simple storagetypes.
     template <typename Type> Type TemplateRead(bool Typechecked = true);
     template <typename Type> bool TemplateRead(Type *Buffer, bool Typechecked = true);
     template <typename Type> bool TemplateWrite(Type Value, bool Typechecked = true);
+
+    // Advanced storagetypes.
+    bool ReadBlob(std::string *Output, bool Typechecked = true);
+    bool ReadBlob(std::basic_string<uint8_t> *Output, bool Typechecked = true);
+    bool ReadBlob(uint32_t DataLength, void *DataBuffer, bool Typechecked = true);
+    std::string ReadBlob(bool Typechecked = true);
+    bool ReadString(std::string &Output, bool Typechecked = true);
+    std::string ReadString(bool Typechecked = true);
+    bool WriteBlob(std::string *Input, bool Typechecked = true);
+    bool WriteBlob(std::basic_string<uint8_t> *Input, bool Typechecked = true);
+    bool WriteBlob(uint32_t DataLength, void *DataBuffer, bool Typechecked = true);
+    bool WriteString(std::string &Input, bool Typechecked = true);
 };

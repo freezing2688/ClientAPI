@@ -6,8 +6,12 @@
         Simple serialization of datatypes.
 */
 
+#include <algorithm>
 #include "Bytebuffer.h"
+#include "..\..\Macros.h"
+#ifndef NO_TTMATH
 #include "..\Datatypes\ttmathint.h"
+#endif
 
 // Constructors.
 #pragma optimize( "", off )
@@ -69,7 +73,10 @@ bool Bytebuffer::SetPosition(uint32_t Pos)
 template <typename ReturnType>
 std::unique_ptr<ReturnType> *Bytebuffer::GetBuffer()
 {
-    return std::unique_ptr<ReturnType>(new uint8_t[InternalBuffer.size()](InternalBuffer.data()));
+    ReturnType *Buffer = (ReturnType *)new char[InternalBuffer.size()]();
+    memcpy(Buffer, InternalBuffer.data(), InternalBuffer.size());
+
+    return new std::unique_ptr<ReturnType>(Buffer);
 }
 
 // Core functionallity.
@@ -144,7 +151,7 @@ bool Bytebuffer::RawWrite(uint32_t WriteCount, void *InBuffer)
 }
 
 // Simple specialized read templates.
-#define SIMPLE_READ(Type, Enum)   \
+#define SIMPLE_TEMPLATE(Type, Enum)   \
 template <> bool Bytebuffer::TemplateRead(Type *Buffer, bool Typechecked) \
 {   \
     if (!Typechecked || ReadDatatype(Enum))    \
@@ -156,54 +163,33 @@ template <> Type Bytebuffer::TemplateRead(bool Typechecked) \
     Type Result{};   \
     TemplateRead<Type>(&Result, Typechecked);   \
     return Result;  \
+}; \
+template <> bool Bytebuffer::TemplateWrite(Type Buffer, bool Typechecked) \
+{   \
+    if (Typechecked)    \
+        WriteDatatype(Enum); \
+    return RawWrite(sizeof(Buffer), &Buffer);    \
 };
 
-SIMPLE_READ(bool, eBytebufferType::BOOL);
-SIMPLE_READ(int8_t, eBytebufferType::SINT8);
-SIMPLE_READ(uint8_t, eBytebufferType::UINT8);
-SIMPLE_READ(int16_t, eBytebufferType::SINT16);
-SIMPLE_READ(uint16_t, eBytebufferType::UINT16);
-SIMPLE_READ(int32_t, eBytebufferType::SINT32);
-SIMPLE_READ(uint32_t, eBytebufferType::UINT32);
-SIMPLE_READ(int64_t, eBytebufferType::SINT64);
-SIMPLE_READ(uint64_t, eBytebufferType::UINT64);
-SIMPLE_READ(ttmath::Int<TTMATH_BITS(128)>, eBytebufferType::SINT128);
-SIMPLE_READ(ttmath::UInt<TTMATH_BITS(128)>, eBytebufferType::UINT128);
-SIMPLE_READ(float, eBytebufferType::FLOAT32);
-SIMPLE_READ(double, eBytebufferType::FLOAT64);
+SIMPLE_TEMPLATE(bool, eBytebufferType::BOOL);
+SIMPLE_TEMPLATE(char, eBytebufferType::SINT8);
+SIMPLE_TEMPLATE(int8_t, eBytebufferType::SINT8);
+SIMPLE_TEMPLATE(uint8_t, eBytebufferType::UINT8);
+SIMPLE_TEMPLATE(int16_t, eBytebufferType::SINT16);
+SIMPLE_TEMPLATE(uint16_t, eBytebufferType::UINT16);
+SIMPLE_TEMPLATE(int32_t, eBytebufferType::SINT32);
+SIMPLE_TEMPLATE(uint32_t, eBytebufferType::UINT32);
+SIMPLE_TEMPLATE(int64_t, eBytebufferType::SINT64);
+SIMPLE_TEMPLATE(uint64_t, eBytebufferType::UINT64);
+#ifndef NO_TTMATH
+SIMPLE_TEMPLATE(ttmath::Int<TTMATH_BITS(128)>, eBytebufferType::SINT128);
+SIMPLE_TEMPLATE(ttmath::UInt<TTMATH_BITS(128)>, eBytebufferType::UINT128);
+#endif
+SIMPLE_TEMPLATE(float, eBytebufferType::FLOAT32);
+SIMPLE_TEMPLATE(double, eBytebufferType::FLOAT64);
 
-// Complex specialized read templates.
-template <> bool Bytebuffer::TemplateRead(std::string *Buffer, bool Typechecked)
-{
-    if (!Typechecked || ReadDatatype(eBytebufferType::ASCIISTRING))
-    {
-        uint32_t StringLength = (uint32_t)strlen((char *)InternalBuffer.data() + InternalPosition) + 1;
-        return RawRead(StringLength, Buffer);
-    }
-    return false;
-};
-template <> std::string Bytebuffer::TemplateRead(bool Typechecked)
-{
-    std::string Result{};
-    TemplateRead<std::string>(&Result, Typechecked);
-    return Result;
-};
-template <> bool Bytebuffer::TemplateRead(std::wstring *Buffer, bool Typechecked)
-{
-    if (!Typechecked || ReadDatatype(eBytebufferType::UNICODESTRING))
-    {
-        uint32_t StringLength = (uint32_t)wcslen((wchar_t *)InternalBuffer.data() + InternalPosition) + 1;
-        return RawRead(StringLength * 2, Buffer);
-    }
-    return false;
-};
-template <> std::wstring Bytebuffer::TemplateRead(bool Typechecked)
-{
-    std::wstring Result{};
-    TemplateRead<std::wstring>(&Result, Typechecked);
-    return Result;
-};
-template <> bool Bytebuffer::TemplateRead(std::basic_string<uint8_t> *Buffer, bool Typechecked)
+// Advanced storagetypes.
+bool Bytebuffer::ReadBlob(std::string *Output, bool Typechecked)
 {
     if (!Typechecked || ReadDatatype(eBytebufferType::BLOB))
     {
@@ -212,24 +198,136 @@ template <> bool Bytebuffer::TemplateRead(std::basic_string<uint8_t> *Buffer, bo
         // Range check.
         if (InternalPosition + BlobLength > InternalBuffer.size())
         {
-            //fDebugPrint("%s, blob (%u) is larger than the buffer. Check your endians.", __func__, BlobLength);
+            DebugPrint(va("%s, blob (%u) is larger than the buffer. Check your endians.", __func__, BlobLength));
             return false;
         }
 
         // Read byte by byte.
         for (uint32_t i = 0; i < BlobLength; ++i)
-            Buffer->push_back(TemplateRead<uint8_t>(false));
+            Output->push_back(TemplateRead<uint8_t>(false));
 
         return true;
     }
     return false;
-};
-template <> std::basic_string<uint8_t> Bytebuffer::TemplateRead(bool Typechecked)
+}
+bool Bytebuffer::ReadBlob(std::basic_string<uint8_t> *Output, bool Typechecked)
 {
-    std::basic_string<uint8_t> Result{};
-    TemplateRead<std::basic_string<uint8_t>>(&Result, Typechecked);
+    if (!Typechecked || ReadDatatype(eBytebufferType::BLOB))
+    {
+        uint32_t BlobLength = TemplateRead<uint32_t>();
+
+        // Range check.
+        if (InternalPosition + BlobLength > InternalBuffer.size())
+        {
+            DebugPrint(va("%s, blob (%u) is larger than the buffer. Check your endians.", __func__, BlobLength));
+            return false;
+        }
+
+        // Read byte by byte.
+        for (uint32_t i = 0; i < BlobLength; ++i)
+            Output->push_back(TemplateRead<uint8_t>(false));
+
+        return true;
+    }
+    return false;
+}
+bool Bytebuffer::ReadBlob(uint32_t DataLength, void *DataBuffer, bool Typechecked)
+{
+    if (!Typechecked || ReadDatatype(eBytebufferType::BLOB))
+    {
+        uint32_t BlobLength = TemplateRead<uint32_t>();
+
+        // Range check.
+        if (InternalPosition + BlobLength > InternalBuffer.size())
+        {
+            DebugPrint(va("%s, blob (%u) is larger than the buffer. Check your endians.", __func__, BlobLength));
+            return false;
+        }
+
+        // Read byte by byte.
+        for (uint32_t i = 0; i < std::min(BlobLength, DataLength); ++i)
+            ((uint8_t *)DataBuffer)[i] = TemplateRead<uint8_t>(false);
+
+        return true;
+    }
+    return false;
+}
+std::string Bytebuffer::ReadBlob(bool Typechecked)
+{
+    std::string Result;
+
+    if (!Typechecked || ReadDatatype(eBytebufferType::BLOB))
+    {
+        uint32_t BlobLength = TemplateRead<uint32_t>();
+
+        // Range check.
+        if (InternalPosition + BlobLength > InternalBuffer.size())
+        {
+            DebugPrint(va("%s, blob (%u) is larger than the buffer. Check your endians.", __func__, BlobLength));
+            return false;
+        }
+
+        // Read byte by byte.
+        for (uint32_t i = 0; i < BlobLength; ++i)
+            Result.push_back(TemplateRead<uint8_t>(false));
+
+    }
     return Result;
-};
+}
+bool Bytebuffer::ReadString(std::string &Output, bool Typechecked)
+{
+    if (!Typechecked || ReadDatatype(eBytebufferType::ASCIISTRING))
+    {
+        uint32_t StringLength = (uint32_t)strlen((char *)InternalBuffer.data() + InternalPosition) + 1;
+        Output.append((char *)InternalBuffer.data() + InternalPosition);
+        return RawRead(StringLength);
+    }
+    return false;
+}
+std::string Bytebuffer::ReadString(bool Typechecked)
+{
+    std::string Result;
+
+    if (!Typechecked || ReadDatatype(eBytebufferType::ASCIISTRING))
+    {
+        uint32_t StringLength = (uint32_t)strlen((char *)InternalBuffer.data() + InternalPosition) + 1;
+        Result.append((char *)InternalBuffer.data() + InternalPosition);
+        RawRead(StringLength);
+    }
+
+    return Result;
+}
+bool Bytebuffer::WriteBlob(std::string *Input, bool Typechecked)
+{
+    if (Typechecked)
+        WriteDatatype(eBytebufferType::BLOB);
+
+    TemplateWrite<uint32_t>((uint32_t)Input->size());
+    return RawWrite((uint32_t)Input->size(), (void *)Input->data());
+}
+bool Bytebuffer::WriteBlob(std::basic_string<uint8_t> *Input, bool Typechecked)
+{
+    if (Typechecked)
+        WriteDatatype(eBytebufferType::BLOB);
+
+    TemplateWrite<uint32_t>((uint32_t)Input->size());
+    return RawWrite((uint32_t)Input->size(), (void *)Input->data());
+}
+bool Bytebuffer::WriteBlob(uint32_t DataLength, void *DataBuffer, bool Typechecked)
+{
+    if (Typechecked)
+        WriteDatatype(eBytebufferType::BLOB);
+
+    TemplateWrite(DataLength);
+    return RawWrite(DataLength, DataBuffer);
+}
+bool Bytebuffer::WriteString(std::string &Input, bool Typechecked)
+{
+    if (Typechecked)
+        WriteDatatype(eBytebufferType::ASCIISTRING);
+
+    return RawWrite((uint32_t)Input.size(), (void *)Input.c_str());
+}
 
 // Utility methods.
 uint8_t Bytebuffer::PeekByte()
