@@ -52,4 +52,7 @@ extern "C"
 
     // Utility methods handle features like compression, encrypton and filemanagement.
     EXPORT(AyriaUtility);
+
+    // Statistics tracking across all applications.
+    EXPORT(AyriaStats);
 };
