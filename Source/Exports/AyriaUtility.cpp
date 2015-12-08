@@ -78,9 +78,6 @@ namespace APIImplentation
      */
     extern bool SM3Hash_192(va_list Variadic);
 
-    extern bool CSVLoad(va_list Variadic);
-    extern bool CSVReadNext(va_list Variadic);
-
 	extern bool HHSStart(va_list Variadic);
 	extern bool HHSContinue(va_list Variadic);
 };
@@ -113,10 +110,6 @@ bool __cdecl AyriaUtility(size_t Command, ...)
         EXPORTMETHOD("FNV1aHash_64", APIImplentation::FNV1aHash_64);
         EXPORTMETHOD("SM3Hash_192", APIImplentation::SM3Hash_192);
         EXPORTMETHOD("SHA3Hash_256", [](va_list Placeholder) { return false; });
-
-        // File readers; takes a char *Data.
-        EXPORTMETHOD("CSVLoad", APIImplentation::CSVLoad);
-        EXPORTMETHOD("CSVReadNext", APIImplentation::CSVReadNext);
 
         // Compression; takes a char *Plaintext, char **ModifiedBuffer, uint32_t PlainLength, int32_t *ModifiedLength.
         EXPORTMETHOD("LZ4Inflate", APIImplentation::LZ4Inflate);
